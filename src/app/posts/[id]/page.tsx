@@ -1,10 +1,10 @@
 "use client";
+import { PostDto } from "@/type/post";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Post } from "../page";
 
 export default function Home() {
-  const [post, setPosts] = useState<Post | null>(null);
+  const [post, setPosts] = useState<PostDto | null>(null);
   const { id } = useParams();
 
   useEffect(() => {
