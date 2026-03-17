@@ -9,13 +9,11 @@ export default function List() {
   const [posts, setPosts] = useState<PostDto[]>([]);
 
   useEffect(() => {
-        fetchApi(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/posts`)
-            .then(data => {
-                console.log(data)
-                setPosts(data);
-            });
-
-    }, []);
+    fetchApi(`/api/v1/posts`).then((data) => {
+      console.log(data);
+      setPosts(data);
+    });
+  }, []);
 
   return posts.length <= 0 ? (
     <div>로딩중.</div>
