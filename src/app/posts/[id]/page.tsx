@@ -1,29 +1,26 @@
 "use client";
+
+import { fetchApi } from "@/lib/client";
 import { PostDto } from "@/type/post";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function Home() {
-  const [post, setPosts] = useState<PostDto | null>(null);
+export default function Detail() {
+  const [post, setPost] = useState<PostDto | null>(null);
   const { id } = useParams();
 
   useEffect(() => {
-    fetch(`http://localhost:8080/api/v1/posts/${id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        setPosts(data);
-      });
-  }, []);
+        fetchApi(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/posts/${id}`)
+            .then(data => setPost(data));
 
-  if(post === null )return (<div>로딩중...</div>) // 가드 클로즈라고도 한다
+    }, []);
   return (
     <>
-      {post == null ? (
-        <div>로딩중...</div>
+      {post === null ? (
+        <div>로딩중..</div>
       ) : (
         <div className="flex flex-col gap-8 items-center">
-          <div>{id}번 상세페이지</div>
+          <h1>{id}번 글 상세페이지</h1>
           <div>
             <h1>{post.title}</h1>
             <div>{post.content}</div>
