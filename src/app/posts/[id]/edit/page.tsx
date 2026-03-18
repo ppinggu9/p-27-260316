@@ -1,9 +1,19 @@
-"use client";
-import { fetchApi } from "@/lib/client";
-import { useRouter } from "next/navigation";
+"use client"
 
-export default function Write() {
-  const router = useRouter();
+import { fetchApi } from "@/lib/client";
+import { PostDto } from "@/type/post";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+export default function Editor(){
+    const [post, setPost] = useState<PostDto | null>(null);
+    const router = useRouter();
+    const {id} = useParams();
+
+    useEffect(() => {
+        fetchApi(`/api/v1/posts/${id}`)
+        .then(setPost);
+    }, []);
 
   const onSubmitHandler = (e: any) => {
     e.preventDefault();
@@ -23,40 +33,40 @@ export default function Write() {
       return;
     }
     //db에 저장
-    fetchApi(`/api/v1/posts`, {
-      method: "POST",
+    fetchApi(`/api/v1/posts/${id}`, {
+      method: "PUT",
       body: JSON.stringify({
         title: title.value,
         content: content.value,
       }),
     })
       .then((data) => {
-           alert("글이 정상적으로 작성되었습니다.");
-
-        // 글 상세 페이지로 이동
-        router.replace(`/posts/${data.data.postDto.id}`);
+           alert("글이 정상적으로 수정되었습니다.");
+           router.replace(`/posts/${id}`); //현재 파라미터 id, data.data.postDto.id 
       })
   };
+
+  if(post == null) return <div>로딩중 ...</div>
 
   return (
     <>
       <div className="flex flex-col gap-4 items-center">
-        <h1>글 작성</h1>
+        <h1>글 수정</h1>
 
-        <form action="" onSubmit={onSubmitHandler}  className="flex flex-col gap-4">
+        <form action="" onSubmit={onSubmitHandler} className="flex flex-col gap-4">
           <input
             type="text"
             name="title"
             className="border-1 rounded p-2"
             placeholder="제목을 입력해주세요"
-          />
+            defaultValue={post.title}/>
           <textarea
             rows={10}
             name="content"
             className="border-1 rounded p-2"
             placeholder="내용을 입력해주세요"
-          ></textarea>
-          <input type="submit" value="작성" className="border-1 rounded p-2 bg-blue-500" />
+            defaultValue={post.content}></textarea>
+          <input type="submit" value="수정" className="border-1 rounded p-2 bg-blue-500" />
         </form>
       </div>
     </>
